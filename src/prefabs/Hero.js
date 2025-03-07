@@ -23,6 +23,7 @@ class Hero extends Phaser.Physics.Arcade.Sprite {
         this.hammerwingSound = scene.sound.add('hammerSwingSound');
         this.swordSwingSound = scene.sound.add('swordSwingSound');
         this.playerHitSound = scene.sound.add('playerHitSound');
+        this.playerHitSound.rate=1.5;
         this.playerWalkSound = scene.sound.add('playerWalkSound')
         this.playerWalkSound.rate = 0.5
         this.playerDodgeSound = scene.sound.add('playerDodgeSound')
@@ -48,7 +49,7 @@ function resetHeroOffsets(hero) {
     hero.body.setOffset(0, 0);
     hero.hammerwingSound.stop();
     hero.swordSwingSound.stop();
-    hero.playerHitSound.stop();
+    //hero.playerHitSound.stop();
     hero.playerWalkSound.stop();
     hero.playerDodgeSound.stop();
 }
