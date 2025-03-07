@@ -307,7 +307,6 @@ class AttackState extends State {
 
         hero.attackReset = 1000;
 
-
         hero.attackReset = 1000;
         hero.attackResetTimer = scene.time.delayedCall(hero.attackReset, () => {
             console.log("resetting attacks");
