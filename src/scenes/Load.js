@@ -21,7 +21,7 @@ class Load extends Phaser.Scene {
         this.load.audio('playerDodgeSound', 'playerDodge.wav')
 
         //Hero Load 
-        this.load.path = "/assets/hero/";
+        this.load.path = "./assets/hero/";
 
         this.load.spritesheet('heroIdleLeft', 'char_idle_left_anim.png', {
             frameWidth: 16,
