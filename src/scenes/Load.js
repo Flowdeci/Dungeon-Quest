@@ -12,7 +12,7 @@ class Load extends Phaser.Scene {
         this.load.tilemapTiledJSON("dungeonTilemapJSON", "dungeon.json");
 
         //Sound Loads
-        this.load.path = './assets/sounds'
+        this.load.path = './assets/sounds/'
         this.load.audio('swordSwingSound', 'swordSwing.wav');
         this.load.audio('hammerSwingSound', 'hammerSwing.mp3')
         this.load.audio('playerHitSound', 'playerHit.wav')
@@ -20,10 +20,10 @@ class Load extends Phaser.Scene {
         this.load.audio('playerWalkSound', 'playerWalk.wav')
         this.load.audio('playerDodgeSound', 'playerDodge.wav')
 
-        //Hero Load C:\Users\Cody\OneDrive\Desktop\Phaser3\Dungeon-Quest\assets\hero\char_attack_00_left_anim.png
-        this.load.path = './assets/hero/'
+        //Hero loads
+        
 
-        this.load.spritesheet('heroIdleLeft', 'char_idle_left_anim.png', {
+        this.load.spritesheet('heroIdleLeft', './assets/hero/char_idle_left_anim.png', {
             frameWidth: 16,
             frameHeight: 16
         })
