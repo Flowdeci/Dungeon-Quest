@@ -45,6 +45,9 @@ class Hero extends Phaser.Physics.Arcade.Sprite {
 }
 
 function resetHeroOffsets(hero) {
+    if(hero.body.onFloor()){
+        hero.canDoubleJump=true;
+    }
     hero.setOrigin(0.5, 1);
     hero.body.setOffset(0, 0);
     hero.hammerwingSound.stop();
@@ -220,10 +223,8 @@ class FallingState extends State {
     execute(scene, hero) {
         let transitions = ['idle', 'move', 'doubleJump'];
         //transition only once on floor
-
         if (handleTransitions(scene, hero, transitions, this.stateMachine)) {
             //reset double jump on land
-            hero.canDoubleJump = true;
             return;
         }
 
@@ -384,7 +385,7 @@ class HurtState extends State {
 
 class DoubleJumpState extends State {
     enter(scene, hero) {
-        this.canDoubleJump = false;
+        hero.canDoubleJump = false;
         hero.setVelocityY(-250);
         console.log("Double Jumping")
     }

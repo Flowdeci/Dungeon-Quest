@@ -1,4 +1,4 @@
-All sprites- o_lobster https://o-lobster.itch.io/
+All sprites- o_lobster https://o-lobster.itch.io/another-metroidvania-asset-pack-vol-1
 
 Sword Sounds, Walk Sounds, Dodge- https://mixkit.co/
 
