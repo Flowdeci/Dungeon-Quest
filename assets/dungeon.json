@@ -51,7 +51,7 @@
                 {
                  "height":0,
                  "id":1,
-                 "name":"playerSpawn",
+                 "name":"player",
                  "point":true,
                  "rotation":0,
                  "type":"",

@@ -11,6 +11,15 @@ class Load extends Phaser.Scene {
         this.load.image("dungeonBackgroundImage", "dungeonBackgroundTileset.png")
         this.load.tilemapTiledJSON("dungeonTilemapJSON", "dungeon.json");
 
+        //Hud
+        this.load.image('heart', 'ui_heart_full.png')
+        this.load.image('emptyHeart', 'ui_heart_empty.png')
+        this.load.image('dungeonBackground', 'dungeonBackground.png')
+
+        // load bitmap font
+        this.load.bitmapFont('fresh_font', 'font/FreshPalm.png', 'font/FreshPalm.xml')
+
+
         //Sound Loads
         this.load.path = './assets/sounds/'
         this.load.audio('swordSwingSound', 'swordSwing.wav');
@@ -19,6 +28,9 @@ class Load extends Phaser.Scene {
         this.load.audio('dungeonBackgroundMusic', 'dungeonBackground.mp3')
         this.load.audio('playerWalkSound', 'playerWalk.wav')
         this.load.audio('playerDodgeSound', 'playerDodge.wav')
+        this.load.audio('playerJumpSound', 'playerJump.wav')
+        this.load.audio('playerDoubleJumpSound', 'playerDoubleJump.wav')
+        this.load.audio('playerHealSound', 'playerHeal.wav')
 
         //Hero loads
         this.load.path = './assets/hero/'
@@ -127,12 +139,39 @@ class Load extends Phaser.Scene {
             frameHeight: 16
         })
 
+        //Rat loads
+        this.load.path = './assets/enemy/rat/'
+
+        this.load.spritesheet('ratRunLeft', 'ratto_run_left_anim.png', {
+            frameWidth: 8,
+            frameHeight: 8
+        })
+
+        this.load.spritesheet('ratRunRight', 'ratto_run_right_anim.png', {
+            frameWidth: 8,
+            frameHeight: 8
+        })
+
 
 
 
     }
 
     create() {
+        this.anims.create({
+            key: 'ratRunLeft',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('ratRunLeft', { start: 0, end: 3 })
+        })
+        this.anims.create({
+            key: 'ratRunRight',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('ratRunRight', { start: 0, end: 3 })
+        })
+
+
         this.anims.create({
             key: 'heroIdleLeft',
             frameRate: 8,
@@ -285,6 +324,6 @@ class Load extends Phaser.Scene {
         })
 
         //start the dungeon scene nce everything loads
-        this.scene.start('dungeonScene');
+        this.scene.start('menuScene');
     }
 }

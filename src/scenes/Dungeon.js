@@ -4,6 +4,8 @@ class Dungeon extends Phaser.Scene {
     }
 
     create() {
+        this.scene.run('gameUIScene')
+
         //Tilemap Stuff here :)
         const map = this.add.tilemap('dungeonTilemapJSON');
         const dungeonTileset = map.addTilesetImage('DungeonTilesset', 'dungeonTilesetImage');
@@ -17,17 +19,34 @@ class Dungeon extends Phaser.Scene {
         //Collision with Layers
         floorLayer.setCollisionByProperty({ collides: true })
         platformLayer.setCollisionByProperty({ platform: true })
-        
 
-        const playerSpawn = map.findObject("Spawns", (obj) => obj.name === 'playerSpawn')
+
+        let playerSpawn = null;
+
+        //Get the spawn layer
+        const spawnLayer = map.getObjectLayer('Spawns');
+
+        spawnLayer.objects.forEach(obj => {
+            switch (obj.name) {
+                case 'player':
+                    playerSpawn = obj;
+                case 'rat':
+                    let rat = new Enemy(this, obj.x, obj.y, 'ratRunRight', 0, 'Right')
+                   
+
+            }
+        })
 
         //Add Hero
+        
         this.hero = new Hero(this, playerSpawn.x, playerSpawn.y, 'heroIdleRight', 0, 'Right');
 
         //Camera
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.startFollow(this.hero, false);
-        this.cameras.main.zoom = 1.5;
+        this.cameras.main.setZoom(1.5);
+        //this.textures.setFilter('linear')
+
 
         //World Bounds
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
@@ -46,8 +65,8 @@ class Dungeon extends Phaser.Scene {
 
     }
 
+
     update() {
-        this.heroFSM.step()
-        //console.log(Phaser.Input.Keyboard.JustDown(this.keys.space));
+        this.heroFSM.step();
     }
 }
