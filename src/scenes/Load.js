@@ -15,6 +15,11 @@ class Load extends Phaser.Scene {
         this.load.image('heart', 'ui_heart_full.png')
         this.load.image('emptyHeart', 'ui_heart_empty.png')
         this.load.image('dungeonBackground', 'dungeonBackground.png')
+        
+        this.load.spritesheet('healthPotion', 'health_potion_idle.png', {
+            frameWidth: 8,
+            frameHeight: 8
+        })
 
         // load bitmap font
         this.load.bitmapFont('fresh_font', 'font/FreshPalm.png', 'font/FreshPalm.xml')
@@ -160,9 +165,49 @@ class Load extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 8
         })
+
+        this.load.spritesheet('ratHurtLeft', 'ratto_hit_with_knockback_left_anim.png', {
+            frameWidth: 16,
+            frameHeight: 8
+        })
+        this.load.spritesheet('ratHurtRight', 'ratto_hit_with_knockback_right_anim.png', {
+            frameWidth: 16,
+            frameHeight: 8
+        })
+        this.load.spritesheet('ratDeath', 'ratto_death_anim.png', {
+            frameWidth: 16,
+            frameHeight: 8
+        })
     }
 
     create() {
+
+        this.anims.create({
+            key: 'healthPotion',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('healthPotion', { start: 0, end: 4 })
+        })
+
+        this.anims.create({
+            key: 'ratDeath',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('ratDeath', { start: 0, end: 11 })
+        })
+
+        this.anims.create({
+            key: 'ratHurtLeft',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('ratHurtLeft', { start: 0, end: 4 })
+        })
+        this.anims.create({
+            key: 'ratHurtRight',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('ratHurtRight', { start: 0, end: 4 })
+        })
         this.anims.create({
             key: 'ratIdleRight',
             frameRate: 8,
@@ -188,7 +233,6 @@ class Load extends Phaser.Scene {
             repeat: -1,
             frames: this.anims.generateFrameNames('ratRunRight', { start: 0, end: 3 })
         })
-
 
         this.anims.create({
             key: 'heroIdleLeft',

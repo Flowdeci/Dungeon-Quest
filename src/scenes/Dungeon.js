@@ -24,6 +24,7 @@ class Dungeon extends Phaser.Scene {
         let playerSpawn = null;
 
         this.rats = this.add.group();
+        this.potions = this.add.group();
 
         //Get the spawn layer
         const spawnLayer = map.getObjectLayer('Spawns');
@@ -37,6 +38,10 @@ class Dungeon extends Phaser.Scene {
                     const rat = new Rat(this, obj.x, obj.y, 'ratIdleLeft', 0, 'Right');
                     this.rats.add(rat);
                     break;
+                case 'potion':
+                    const potion = new Potion(this, obj.x, obj.y, 'healthPotion', 0);
+                    this.potions.add(potion);
+                    break;
 
             }
         })
@@ -45,12 +50,13 @@ class Dungeon extends Phaser.Scene {
 
         this.hero = new Hero(this, playerSpawn.x, playerSpawn.y, 'heroIdleRight', 0, 'Right');
 
+        sceneEvents.emit('player-potion-change', this.hero.potions)
+        sceneEvents.emit('player-health-change', this.hero.health)
+
         //Camera
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.startFollow(this.hero, false);
         this.cameras.main.setZoom(1.5);
-        //this.textures.setFilter('linear')
-
 
         //World Bounds
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
@@ -61,8 +67,9 @@ class Dungeon extends Phaser.Scene {
 
         //Overlaps
         this.physics.add.overlap(this.hero, this.rats, this.handleOverlap, null, this);
+        this.physics.add.overlap(this.hero.attackHitbox, this.rats, this.handleSwordHit, null, this)
+        this.physics.add.overlap(this.hero, this.potions, this.handlePotionPickup, null, this);
 
-        //this.physics.add.collider(this.hero, platformLayer)
 
         // input
         this.keys = this.input.keyboard.createCursorKeys()
@@ -83,9 +90,26 @@ class Dungeon extends Phaser.Scene {
     }
 
     handleOverlap(player, rat) {
-        console.log('Player and rat overlapped!');
-        this.hero.tryTransition(['hurt'])
-        //this.heroFSM.transition('hurt')
+        if (!rat.isHurt) {
+            player.tryTransition(['hurt'])
+        }
+    }
+
+    handleSwordHit(hitbox, rat) {
+        //console.log("Rat hit by sword!");
+        if (rat && rat.health > 0) {
+            rat.handleHurt(hitbox.x);
+        }
+    }
+
+    handlePotionPickup(hero, potion) {
+        //console.log("Potion picked up!");
+
+        if (hero.potions < hero.maxPotions) {
+            hero.potions += 1;
+            sceneEvents.emit('player-potion-change', hero.potions);
+            potion.destroy();
+        }
     }
 
 }

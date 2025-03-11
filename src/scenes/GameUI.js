@@ -7,7 +7,10 @@ class GameUI extends Phaser.Scene {
         this.hearts = this.add.group({
             classType: Phaser.GameObjects.Image
         })
-        
+
+        this.potions = this.add.image(10, 30, 'healthPotion', 3).setScale(1.5);
+        this.potionCount = this.add.text(20, 24, "3", { fontSize: '14px', })
+
         this.hearts.createMultiple({
             key: 'heart',
             setScale: 0.05,
@@ -19,7 +22,8 @@ class GameUI extends Phaser.Scene {
             quantity: 5,
         })
 
-        sceneEvents.on('player-health-change', this.handlePlayerHealthChange,this)
+        sceneEvents.on('player-health-change', this.handlePlayerHealthChange, this)
+        sceneEvents.on('player-potion-change', this.handlePlayerPotionCountChange, this)
     }
 
     handlePlayerHealthChange(health) {
@@ -33,6 +37,10 @@ class GameUI extends Phaser.Scene {
                 heart.setTexture('emptyHeart')
             }
         })
+    }
+
+    handlePlayerPotionCountChange(count) {
+        this.potionCount.setText(`${count}`)
     }
 
 }

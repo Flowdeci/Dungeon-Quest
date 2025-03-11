@@ -21,13 +21,19 @@ class Hero extends Phaser.Physics.Arcade.Sprite {
         this.attackResetTimer = null;
         this.maxHealth = 5;
         this.health = this.maxHealth;
-        this.potions = 0;
+
         this.maxPotions = 3;
+        this.potions = this.maxPotions;
+
         this.scene = scene
         this.hurtReset = 0;//timer for how long since last atttack, at 0
 
+
+        sceneEvents.emit('player-potion-change', this.potions)
+        sceneEvents.emit('player-health-change', this.health)
+
         // Add an attack hitbox
-        this.attackHitbox = scene.add.rectangle(this.x, this.y, 20, 20, 0xff0000, 0.3); // Invisible red rectangle
+        this.attackHitbox = scene.add.rectangle(this.x, this.y, 20, 20, 0xff0000, 0); // Invisible red rectangle
         scene.physics.add.existing(this.attackHitbox);
         this.attackHitbox.body.setAllowGravity(false);
         this.attackHitbox.body.enable = false; // Initially disabled
@@ -165,7 +171,7 @@ function handleTransitions(scene, hero, transitions, stateMachine) {
                 }
                 break;
             case 'heal':
-                if (Phaser.Input.Keyboard.JustDown(up)) {
+                if (Phaser.Input.Keyboard.JustDown(up) && hero.potions > 0) {
                     resetHeroOffsets(hero);
                     stateMachine.transition('heal')
                     return
@@ -322,9 +328,10 @@ class DashState extends State {
 
 class AttackState extends State {
     enter(scene, hero) {
-        console.log("Entering Attack");
+        //console.log("Entering Attack");
         //hero.setVelocity(0);
         hero.swordSwingSound.play();
+        hero.attackHitbox.body.enable = true;
 
         //If we attack again clear and delete the odl timer so it doesnt reset our attack chain prematurley
         if (hero.attackResetTimer) {
@@ -348,12 +355,13 @@ class AttackState extends State {
             hero.setOrigin(0.5, 1);
             hero.body.setOffset(0, 0);
             this.stateMachine.transition('idle');
+            hero.attackHitbox.body.enable = false;
         });
 
 
         hero.attackReset = 1000;
         hero.attackResetTimer = scene.time.delayedCall(hero.attackReset, () => {
-            console.log("resetting attacks");
+            //console.log("resetting attacks");
             hero.attackReset = 0;
             hero.attackFrame = 0;
             hero.attackResetTimer = null;
@@ -386,7 +394,7 @@ class AttackState extends State {
 
 class HammerState extends State {
     enter(scene, hero) {
-        console.log("Entering Hammer Attack");
+        //console.log("Entering Hammer Attack");
         hero.hammerwingSound.play()
         hero.setVelocity(0);
         hero.anims.play(`heroHammer${hero.direction}`, true);
@@ -421,7 +429,6 @@ class HurtState extends State {
             this.stateMachine.transition('idle');
 
             scene.time.delayedCall(hero.hurtReset, () => {
-                console.log("inviciblity over");
                 hero.hurtReset = 0;
 
             });
@@ -443,7 +450,7 @@ class DoubleJumpState extends State {
     enter(scene, hero) {
         hero.canDoubleJump = false;
         hero.setVelocityY(-250);
-        console.log("Double Jumping")
+        //console.log("Double Jumping")
         hero.playerJumpSound.play();
     }
     execute(scene, hero) {
@@ -478,11 +485,14 @@ class HealState extends State {
             this.stateMachine.transition('idle')
             return;
         }
+
+
         console.log("heal")
         hero.playerHealSound.play();
         hero.health += 1;
+        hero.potions -= 1;
 
-
+        sceneEvents.emit('player-potion-change', hero.potions)
         sceneEvents.emit('player-health-change', hero.health)
         this.stateMachine.transition('idle')
     }
