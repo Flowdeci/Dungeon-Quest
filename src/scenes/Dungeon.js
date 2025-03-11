@@ -13,15 +13,17 @@ class Dungeon extends Phaser.Scene {
 
         const bgLayer = map.createLayer("Background", dungeonBackgroundTileset, 0, 0);
         const decorationLayer = map.createLayer("Decoration", dungeonTileset, 0, 0);
-        const floorLayer = map.createLayer("Floor", dungeonTileset, 0, 0);
+        this.floorLayer = map.createLayer("Floor", dungeonTileset, 0, 0);
         const platformLayer = map.createLayer("Platforms", dungeonTileset, 0, 0);
 
         //Collision with Layers
-        floorLayer.setCollisionByProperty({ collides: true })
+        this.floorLayer.setCollisionByProperty({ collides: true })
         platformLayer.setCollisionByProperty({ platform: true })
 
 
         let playerSpawn = null;
+
+        this.rats = this.add.group();
 
         //Get the spawn layer
         const spawnLayer = map.getObjectLayer('Spawns');
@@ -30,15 +32,17 @@ class Dungeon extends Phaser.Scene {
             switch (obj.name) {
                 case 'player':
                     playerSpawn = obj;
+                    break;
                 case 'rat':
-                    let rat = new Enemy(this, obj.x, obj.y, 'ratRunRight', 0, 'Right')
-                   
+                    const rat = new Rat(this, obj.x, obj.y, 'ratIdleLeft', 0, 'Right');
+                    this.rats.add(rat);
+                    break;
 
             }
         })
 
         //Add Hero
-        
+
         this.hero = new Hero(this, playerSpawn.x, playerSpawn.y, 'heroIdleRight', 0, 'Right');
 
         //Camera
@@ -52,7 +56,12 @@ class Dungeon extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         //Collision
-        this.physics.add.collider(this.hero, floorLayer);
+        this.physics.add.collider(this.hero, this.floorLayer);
+        this.physics.add.collider(this.rats, this.floorLayer);
+
+        //Overlaps
+        this.physics.add.overlap(this.hero, this.rats, this.handleOverlap, null, this);
+
         //this.physics.add.collider(this.hero, platformLayer)
 
         // input
@@ -62,11 +71,22 @@ class Dungeon extends Phaser.Scene {
 
         //Music
         this.sound.play('dungeonBackgroundMusic')
-
     }
 
 
     update() {
         this.heroFSM.step();
+
+        this.rats.getChildren().forEach(rat => {
+            rat.update();
+        });
     }
+
+    handleOverlap(player, rat) {
+        console.log('Player and rat overlapped!');
+        this.hero.tryTransition(['hurt'])
+        //this.heroFSM.transition('hurt')
+    }
+
 }
+

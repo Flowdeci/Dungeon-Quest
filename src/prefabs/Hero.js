@@ -19,10 +19,19 @@ class Hero extends Phaser.Physics.Arcade.Sprite {
         this.attackReset = 0;//timer for how long since last attack
         this.isAttacking = false;
         this.attackResetTimer = null;
-        this.maxHealth = 3;
+        this.maxHealth = 5;
         this.health = this.maxHealth;
         this.potions = 0;
         this.maxPotions = 3;
+        this.scene = scene
+        this.hurtReset = 0;//timer for how long since last atttack, at 0
+
+        // Add an attack hitbox
+        this.attackHitbox = scene.add.rectangle(this.x, this.y, 20, 20, 0xff0000, 0.3); // Invisible red rectangle
+        scene.physics.add.existing(this.attackHitbox);
+        this.attackHitbox.body.setAllowGravity(false);
+        this.attackHitbox.body.enable = false; // Initially disabled
+
 
         this.hammerwingSound = scene.sound.add('hammerSwingSound');
         this.swordSwingSound = scene.sound.add('swordSwingSound');
@@ -49,6 +58,22 @@ class Hero extends Phaser.Physics.Arcade.Sprite {
             doubleJump: new DoubleJumpState(),
             heal: new HealState(),
         }, [scene, this])
+    }
+
+    preUpdate(time, delta) {
+        super.preUpdate(time, delta);
+
+        // Update the hitbox position to follow the Hero
+        if (this.direction === 'Right') {
+            this.attackHitbox.x = this.x + 15;
+        } else {
+            this.attackHitbox.x = this.x - 15;
+        }
+        this.attackHitbox.y = this.y - 10;
+    }
+
+    tryTransition(transitions) {
+        handleTransitions(this.scene, this, transitions, this.scene.heroFSM)
     }
 }
 
@@ -133,7 +158,7 @@ function handleTransitions(scene, hero, transitions, stateMachine) {
                 }
                 break;
             case 'hurt':
-                if (down.isDown && hero.body.onFloor()) {
+                if (hero.body.onFloor() && hero.hurtReset === 0 && stateMachine.state != 'dash') {
                     resetHeroOffsets(hero);
                     stateMachine.transition('hurt');
                     return true;
@@ -159,7 +184,7 @@ class IdleState extends State {
     enter(scene, hero) {
         hero.setVelocity(0);
         hero.anims.play(`heroIdle${hero.direction}`);
-        hero.anims.stop();
+
     }
 
     execute(scene, hero) {
@@ -169,7 +194,7 @@ class IdleState extends State {
         const FKey = scene.keys.FKey
 
 
-        const transitions = ['move', 'jump', 'falling', 'dash', 'attack', 'hammer', 'hurt', 'heal'];
+        const transitions = ['move', 'jump', 'falling', 'dash', 'attack', 'hammer', 'heal'];
         if (handleTransitions(scene, hero, transitions, this.stateMachine)) {
             return;
         }
@@ -183,7 +208,7 @@ class MoveState extends State {
         const HKey = scene.keys.HKey
         const FKey = scene.keys.FKey
 
-        const transitions = ['idle', 'jump', 'falling', 'dash', 'attack', 'hammer', 'hurt', 'heal'];
+        const transitions = ['idle', 'jump', 'falling', 'dash', 'attack', 'hammer', 'heal'];
         if (handleTransitions(scene, hero, transitions, this.stateMachine)) {
             return;
         }
@@ -325,7 +350,6 @@ class AttackState extends State {
             this.stateMachine.transition('idle');
         });
 
-        hero.attackReset = 1000;
 
         hero.attackReset = 1000;
         hero.attackResetTimer = scene.time.delayedCall(hero.attackReset, () => {
@@ -337,7 +361,7 @@ class AttackState extends State {
     }
 
     execute(scene, hero) {
-        const transitions = ['hurt'];
+        const transitions = [];
         if (handleTransitions(scene, hero, transitions, this.stateMachine)) {
             return;
         }
@@ -380,31 +404,38 @@ class HammerState extends State {
             this.stateMachine.transition('idle');
         });
     }
-
-    execute(scene, hero) {
-        const transitions = ['hurt'];
-        if (handleTransitions(scene, hero, transitions, this.stateMachine)) {
-            return;
-        }
-    }
 }
 
 class HurtState extends State {
     enter(scene, hero) {
+        hero.hurtReset = 500;
+        if (hero.anims.isPlaying && hero.anims.currentAnim.key === `heroHit${hero.direction}`) {
+            return;
+        }
+
         hero.setVelocity(0);
         hero.playerHitSound.play();
         hero.anims.play(`heroHit${hero.direction}`, true);
 
         hero.once('animationcomplete', () => {
             this.stateMachine.transition('idle');
+
+            scene.time.delayedCall(hero.hurtReset, () => {
+                console.log("inviciblity over");
+                hero.hurtReset = 0;
+
+            });
         });
 
         hero.health -= 1;
         sceneEvents.emit('player-health-change', hero.health)
         if (hero.health <= 0) {
             //Death Logic Game over
+            hero.health = 0;
             return;
         }
+
+
     }
 }
 
@@ -442,10 +473,12 @@ class DoubleJumpState extends State {
 
 class HealState extends State {
     enter(scene, hero) {
+
         if (hero.health === hero.maxHealth) {
             this.stateMachine.transition('idle')
             return;
         }
+        console.log("heal")
         hero.playerHealSound.play();
         hero.health += 1;
 
@@ -453,5 +486,5 @@ class HealState extends State {
         sceneEvents.emit('player-health-change', hero.health)
         this.stateMachine.transition('idle')
     }
-    
+
 }

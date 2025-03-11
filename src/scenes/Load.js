@@ -143,21 +143,39 @@ class Load extends Phaser.Scene {
         this.load.path = './assets/enemy/rat/'
 
         this.load.spritesheet('ratRunLeft', 'ratto_run_left_anim.png', {
-            frameWidth: 8,
+            frameWidth: 16,
             frameHeight: 8
         })
 
         this.load.spritesheet('ratRunRight', 'ratto_run_right_anim.png', {
-            frameWidth: 8,
+            frameWidth: 16,
             frameHeight: 8
         })
 
-
-
-
+        this.load.spritesheet('ratIdleRight', 'ratto_idle_right_anim.png', {
+            frameWidth: 16,
+            frameHeight: 8
+        })
+        this.load.spritesheet('ratIdleLeft', 'ratto_idle_left_anim.png', {
+            frameWidth: 16,
+            frameHeight: 8
+        })
     }
 
     create() {
+        this.anims.create({
+            key: 'ratIdleRight',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('ratIdleRight', { start: 0, end: 5 })
+        })
+
+        this.anims.create({
+            key: 'ratIdleLeft',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('ratIdleLeft', { start: 0, end: 5 })
+        })
         this.anims.create({
             key: 'ratRunLeft',
             frameRate: 8,
