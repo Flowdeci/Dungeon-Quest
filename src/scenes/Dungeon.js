@@ -25,6 +25,7 @@ class Dungeon extends Phaser.Scene {
 
         this.rats = this.add.group();
         this.potions = this.add.group();
+        this.zombies = this.add.group();
 
         //Get the spawn layer
         const spawnLayer = map.getObjectLayer('Spawns');
@@ -41,6 +42,10 @@ class Dungeon extends Phaser.Scene {
                 case 'potion':
                     const potion = new Potion(this, obj.x, obj.y, 'healthPotion', 0);
                     this.potions.add(potion);
+                    break;
+                case 'zombie':
+                    const zombie = new Zombie(this, obj.x, obj.y, 'zombieIdleLeft', 0, 'Left');
+                    this.zombies.add(zombie);
                     break;
 
             }
@@ -64,10 +69,17 @@ class Dungeon extends Phaser.Scene {
         //Collision
         this.physics.add.collider(this.hero, this.floorLayer);
         this.physics.add.collider(this.rats, this.floorLayer);
+        this.physics.add.collider(this.zombies, this.floorLayer);
 
         //Overlaps
-        this.physics.add.overlap(this.hero, this.rats, this.handleOverlap, null, this);
-        this.physics.add.overlap(this.hero.attackHitbox, this.rats, this.handleSwordHit, null, this)
+        
+        this.physics.add.overlap(this.hero, this.rats, this.handleOverlap, null, this);//Rat hits player
+        this.physics.add.overlap(this.hero.attackHitbox, this.rats, this.handleSwordHit, null, this)//PLayer can hit rat
+
+        this.physics.add.overlap(this.hero, this.zombies, this.handleOverlap, null, this);//Rat hits player
+        this.physics.add.overlap(this.hero.attackHitbox, this.zombies, this.handleSwordHit, null, this)//PLayer can hit rat
+        
+
         this.physics.add.overlap(this.hero, this.potions, this.handlePotionPickup, null, this);
 
 
@@ -87,6 +99,10 @@ class Dungeon extends Phaser.Scene {
         this.rats.getChildren().forEach(rat => {
             rat.update();
         });
+
+        this.zombies.getChildren().forEach(zombie => {
+            zombie.update();
+        })
     }
 
     handleOverlap(player, rat) {

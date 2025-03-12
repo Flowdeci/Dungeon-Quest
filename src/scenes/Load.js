@@ -15,7 +15,7 @@ class Load extends Phaser.Scene {
         this.load.image('heart', 'ui_heart_full.png')
         this.load.image('emptyHeart', 'ui_heart_empty.png')
         this.load.image('dungeonBackground', 'dungeonBackground.png')
-        
+
         this.load.spritesheet('healthPotion', 'health_potion_idle.png', {
             frameWidth: 8,
             frameHeight: 8
@@ -178,9 +178,114 @@ class Load extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 8
         })
+
+        //Zombie Loads
+        this.load.path = './assets/enemy/zombie/'
+        this.load.spritesheet('zombieIdleRight', 'zombie_idle_right_anim.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
+
+        this.load.spritesheet('zombieIdleLeft', 'zombie_idle_left_anim.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
+
+        this.load.spritesheet('zombieHitLeft', 'zombie_hit_left_anim.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
+
+        this.load.spritesheet('zombieHitRight', 'zombie_hit_right_anim.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
+
+        this.load.spritesheet('zombieAttackLeft', 'zombie_attack_left_anim.png', {
+            frameWidth: 32,
+            frameHeight: 16
+        })
+
+        this.load.spritesheet('zombieAttackRight', 'zombie_attack_right_anim.png', {
+            frameWidth: 32,
+            frameHeight: 16
+        })
+
+        this.load.spritesheet('zombieRunRight', 'zombie_run_right_anim.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
+
+        this.load.spritesheet('zombieDeath', 'zombie_death_anim.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
     }
 
     create() {
+        this.anims.create({
+            key: 'zombieDeath',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('zombieDeath', { start: 0, end: 5 })
+        })
+
+        this.anims.create({
+            key: 'zombieIdleLeft',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('zombieIdleLeft', { start: 0, end: 5 })
+        })
+
+        this.anims.create({
+            key: 'zombieIdleRight',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('zombieIdleRight', { start: 0, end: 5 })
+        })
+
+        this.anims.create({
+            key: 'zombieHurtRight',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('zombieHitRight', { start: 0, end: 4 })
+        })
+
+        this.anims.create({
+            key: 'zombieHurtLeft',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('zombieHitLeft', { start: 0, end: 4 })
+        })
+
+
+        this.anims.create({
+            key: 'zombieAttackRight',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('zombieAttackRight', { start: 0, end: 7 })
+        })
+
+        this.anims.create({
+            key: 'zombieAttackLeft',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('zombieAttackLeft', { start: 0, end: 7 })
+        })
+
+        this.anims.create({
+            key: 'zombieRunLeft',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('zombieRunRight', { start: 0, end: 5 })
+        })
+
+        this.anims.create({
+            key: 'zombieRunRight',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('zombieRunRight', { start: 0, end: 5 })
+        })
 
         this.anims.create({
             key: 'healthPotion',
@@ -384,6 +489,8 @@ class Load extends Phaser.Scene {
             repeat: 0,
             frames: this.anims.generateFrameNames('heroDoubleJumpRight', { start: 0, end: 3 })
         })
+
+
 
         //start the dungeon scene nce everything loads
         this.scene.start('menuScene');
