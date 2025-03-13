@@ -72,16 +72,20 @@ class Dungeon extends Phaser.Scene {
         this.physics.add.collider(this.zombies, this.floorLayer);
 
         //Overlaps
-        
-        this.physics.add.overlap(this.hero, this.rats, this.handleOverlap, null, this);//Rat hits player
+
+        //Rat collisions
+        this.physics.add.overlap(this.hero, this.rats, this.handleEnemyOverlap, null, this);//Rat hits player
         this.physics.add.overlap(this.hero.attackHitbox, this.rats, this.handleSwordHit, null, this)//PLayer can hit rat
 
-        this.physics.add.overlap(this.hero, this.zombies, this.handleOverlap, null, this);//Rat hits player
-        this.physics.add.overlap(this.hero.attackHitbox, this.zombies, this.handleSwordHit, null, this)//PLayer can hit rat
-        
+        //Zombie collisons
+        //this.physics.add.overlap(this.hero, this.zombies, this.handleEnemyOverlap, null, this);//Rat hits player
+        this.physics.add.overlap(this.hero.attackHitbox, this.zombies, this.handleSwordHit, null, this)//PLayer can hit zombie
+        this.zombies.getChildren().forEach(zombie=>{
+            this.physics.add.overlap(this.hero, zombie.attackHitbox, this.handleZombieSwordHit, null, this);//zombie swor dhit player
+        })
 
+        //Potion collisions
         this.physics.add.overlap(this.hero, this.potions, this.handlePotionPickup, null, this);
-
 
         // input
         this.keys = this.input.keyboard.createCursorKeys()
@@ -105,25 +109,31 @@ class Dungeon extends Phaser.Scene {
         })
     }
 
-    handleOverlap(player, rat) {
-        if (!rat.isHurt) {
-            player.tryTransition(['hurt'])
+    handleSwordHit(hitbox, enemy) {
+        //Player hits any enemy
+        if (enemy && enemy.health > 0) {
+            enemy.handleHurt(hitbox.x);
         }
     }
 
-    handleSwordHit(hitbox, rat) {
-        //console.log("Rat hit by sword!");
-        if (rat && rat.health > 0) {
-            rat.handleHurt(hitbox.x);
+    handleEnemyOverlap(player, enemy) {
+        if (!enemy.isHurt) {
+            this.hero.damageToTake=1;
+            this.hero.tryTransition(['hurt'])
         }
+    }
+   
+    handleZombieSwordHit(player, hitbox){
+        //console.log("zombie sword hit player")
+        this.hero.damageToTake=2;
+        this.hero.tryTransition(['hurt'])
     }
 
     handlePotionPickup(hero, potion) {
         //console.log("Potion picked up!");
-
-        if (hero.potions < hero.maxPotions) {
-            hero.potions += 1;
-            sceneEvents.emit('player-potion-change', hero.potions);
+        if (this.hero.potions < this.hero.maxPotions) {
+            this.hero.potions += 1;
+            sceneEvents.emit('player-potion-change', this.hero.potions);
             potion.destroy();
         }
     }

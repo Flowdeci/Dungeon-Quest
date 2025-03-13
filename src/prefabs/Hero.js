@@ -27,6 +27,7 @@ class Hero extends Phaser.Physics.Arcade.Sprite {
 
         this.scene = scene
         this.hurtReset = 0;//timer for how long since last atttack, at 0
+        this.damageToTake = 1;
 
 
         sceneEvents.emit('player-potion-change', this.potions)
@@ -434,7 +435,7 @@ class HurtState extends State {
             });
         });
 
-        hero.health -= 1;
+        hero.health -= hero.damageToTake;
         sceneEvents.emit('player-health-change', hero.health)
         if (hero.health <= 0) {
             //Death Logic Game over

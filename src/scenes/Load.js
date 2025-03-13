@@ -216,6 +216,11 @@ class Load extends Phaser.Scene {
             frameHeight: 16
         })
 
+        this.load.spritesheet('zombieRunLeft', 'zombie_run_left_anim.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
+
         this.load.spritesheet('zombieDeath', 'zombie_death_anim.png', {
             frameWidth: 16,
             frameHeight: 16
@@ -277,7 +282,7 @@ class Load extends Phaser.Scene {
             key: 'zombieRunLeft',
             frameRate: 8,
             repeat: -1,
-            frames: this.anims.generateFrameNames('zombieRunRight', { start: 0, end: 5 })
+            frames: this.anims.generateFrameNames('zombieRunLeft', { start: 0, end: 5 })
         })
 
         this.anims.create({
