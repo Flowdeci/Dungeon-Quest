@@ -9,6 +9,10 @@ class Load extends Phaser.Scene {
 
         this.load.image("dungeonTilesetImage", "dungeonTileset.png")
         this.load.image("dungeonBackgroundImage", "dungeonBackgroundTileset.png")
+        this.load.image('gardenTilesetImage', "gardenTileset.png");
+        this.load.image('gardentBackgroundImage1', 'gardenBackgroundTileset1.png')
+        this.load.image('bossTilesetImage', 'bossTileset.png')
+        this.load.image('bossBackgroundImage1', 'bossBackgroundTileset1.png')
         this.load.tilemapTiledJSON("dungeonTilemapJSON", "dungeon.json");
 
         //Hud
@@ -36,6 +40,8 @@ class Load extends Phaser.Scene {
         this.load.audio('playerJumpSound', 'playerJump.wav')
         this.load.audio('playerDoubleJumpSound', 'playerDoubleJump.wav')
         this.load.audio('playerHealSound', 'playerHeal.wav')
+
+
 
         //Hero loads
         this.load.path = './assets/hero/'
@@ -225,9 +231,174 @@ class Load extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 16
         })
+
+        //Boss Loads
+        this.load.path = './assets/enemy/boss/'
+        this.load.spritesheet('bossIdle', 'lord_wizard_idle_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossRunLeft', 'lord_wizard_run_left_anim.png', {
+            frameWidth: 48,
+            frameHeight: 8
+        })
+
+        this.load.spritesheet('bossRunRight', 'lord_wizard_run_right_anim.png', {
+            frameWidth: 48,
+            frameHeight: 8
+        })
+
+        this.load.spritesheet('bossHidingRight', 'lord_wizard_hiding_right_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossHidingLeft', 'lord_wizard_hiding_left_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossEmergingLeft', 'lord_wizard_emerging_left_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossEmergingRight', 'lord_wizard_emerging_right_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossDeath', 'lord_wizard_death_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossAttackLeft', 'lord_wizard_attack_00_left_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossAttackRight', 'lord_wizard_attack_00_right_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossHitRight', 'lord_wizard_hit_right_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossHitLeft', 'lord_wizard_hit_left_anim.png', {
+            frameWidth: 48,
+            frameHeight: 48
+        })
+
+        this.load.spritesheet('bossOrb', 'lord_wizard_attack_orb_anim.png', {
+            frameWidth: 21,
+            frameHeight: 21
+        })
+
+
+
     }
 
     create() {
+
+        this.anims.create({
+            key: 'bossOrb',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('bossOrb', { start: 0, end: 3 })
+        })
+
+        this.anims.create({
+            key: 'bossAttackLeft',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('bossAttackLeft', { start: 0, end: 9 })
+        })
+
+        this.anims.create({
+            key: 'bossAttackRight',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('bossAttackRight', { start: 0, end: 9 })
+        })
+
+        this.anims.create({
+            key: 'bossHitLeft',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('bossHitLeft', { start: 0, end: 4 })
+        })
+
+        this.anims.create({
+            key: 'bossHitRight',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('bossHitRight', { start: 0, end: 4 })
+        })
+
+        this.anims.create({
+            key: 'bossDEath',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('bossDeath', { start: 0, end: 14 })
+        })
+
+        this.anims.create({
+            key: 'bossHidingRight',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('bossHidingRight', { start: 0, end: 7 })
+        })
+
+        this.anims.create({
+            key: 'bossHidingLeft',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('bossHidingLeft', { start: 0, end: 7 })
+        })
+
+        this.anims.create({
+            key: 'bossEmergingLeft',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('bossEmergingLeft', { start: 0, end: 7 })
+        })
+
+        this.anims.create({
+            key: 'bossEmergingRight',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('bossEmergingRight', { start: 0, end: 7 })
+        })
+
+        this.anims.create({
+            key: 'bossIdle',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('bossIdle', { start: 0, end: 5 })
+        })
+
+        this.anims.create({
+            key: 'bossRunRight',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('bossRunRight', { start: 0, end: 3 })
+        })
+
+        this.anims.create({
+            key: 'bossRunLeft',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('bossRunLeft', { start: 0, end: 3 })
+        })
+
+
+
+
         this.anims.create({
             key: 'zombieDeath',
             frameRate: 8,

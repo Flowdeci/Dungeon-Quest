@@ -13,7 +13,7 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
 
         // Rat properties
         this.scene = scene;
-        this.health = 3;
+        this.health = 2;
         this.speed = 40;
         this.damage = 1;
         this.direction = direction;
