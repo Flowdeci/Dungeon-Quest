@@ -28,6 +28,10 @@ class Load extends Phaser.Scene {
         // load bitmap font
         this.load.bitmapFont('fresh_font', 'font/FreshPalm.png', 'font/FreshPalm.xml')
 
+        this.load.spritesheet('portal', 'portal_void_effect_with_tile_anim.png', {
+            frameWidth: 48,
+            frameHeight: 40,
+        })
 
         //Sound Loads
         this.load.path = './assets/sounds/'
@@ -40,11 +44,25 @@ class Load extends Phaser.Scene {
         this.load.audio('playerJumpSound', 'playerJump.wav')
         this.load.audio('playerDoubleJumpSound', 'playerDoubleJump.wav')
         this.load.audio('playerHealSound', 'playerHeal.wav')
+        this.load.audio('bossMusic', 'bossMusic.mp3')
+        this.load.audio('zombieHit', 'zombieHit.mp3')
+        this.load.audio('bossHit', 'bossHit.mp3')
+        this.load.audio('ratHit', 'ratHit.mp3')
 
 
 
         //Hero loads
         this.load.path = './assets/hero/'
+
+        this.load.spritesheet('heroDeathLeft', 'char_death_left_anim.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
+
+        this.load.spritesheet('heroDeathRight', 'char_death_right_anim.png', {
+            frameWidth: 16,
+            frameHeight: 16
+        })
 
         this.load.spritesheet('heroIdleLeft', 'char_idle_left_anim.png', {
             frameWidth: 16,
@@ -304,6 +322,12 @@ class Load extends Phaser.Scene {
     }
 
     create() {
+        this.anims.create({
+            key: 'portal',
+            frameRate: 8,
+            repeat: -1,
+            frames: this.anims.generateFrameNames('portal', { start: 0, end: 3 })
+        })
 
         this.anims.create({
             key: 'bossOrb',
@@ -341,7 +365,7 @@ class Load extends Phaser.Scene {
         })
 
         this.anims.create({
-            key: 'bossDEath',
+            key: 'bossDeath',
             frameRate: 8,
             repeat: 0,
             frames: this.anims.generateFrameNames('bossDeath', { start: 0, end: 14 })
@@ -547,6 +571,21 @@ class Load extends Phaser.Scene {
             repeat: -1,
             frames: this.anims.generateFrameNames('heroJumpRight', { start: 0, end: 2 })
         })
+
+        this.anims.create({
+            key: 'heroDeathLeft',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('heroDeathLeft', { start: 0, end: 10 })
+        })
+
+        this.anims.create({
+            key: 'heroDeathRight',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNames('heroDeathRight', { start: 0, end: 10 })
+        })
+
 
         this.anims.create({
             key: 'heroJumpLeft',

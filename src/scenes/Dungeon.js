@@ -32,6 +32,7 @@ class Dungeon extends Phaser.Scene {
         this.potions = this.add.group();
         this.zombies = this.add.group();
 
+
         //Get the spawn layer
         const spawnLayer = map.getObjectLayer('Spawns');
 
@@ -53,11 +54,21 @@ class Dungeon extends Phaser.Scene {
                     this.zombies.add(zombie);
                     break;
                 case 'boss':
-                    this.boss = new Boss(this, obj.x, obj.y, ' bossIdle', 0, 'Left')
+                    this.bossSpawn = obj;
+                    break;
+                case 'portal':
+                    this.portal = new Portal(this, obj.x, obj.y, 'portal', 0);
+
+                    break;
+                case 'playerBossSpawn':
+                    this.playerBossSpawn = obj;
                     break;
 
             }
         })
+
+        this.portal.target = this.playerBossSpawn;
+        ;
 
         //Add Hero
         this.hero = new Hero(this, playerSpawn.x, playerSpawn.y, 'heroIdleRight', 0, 'Right');
@@ -77,10 +88,15 @@ class Dungeon extends Phaser.Scene {
         this.physics.add.collider(this.hero, this.floorLayer);
         this.physics.add.collider(this.rats, this.floorLayer);
         this.physics.add.collider(this.zombies, this.floorLayer);
-        this.physics.add.collider(this.boss, this.floorLayer);
+
 
 
         //Overlaps
+        //Portal
+        this.physics.add.overlap(this.hero, this.portal, () => {
+            this.hero.setPosition(this.portal.target.x, this.portal.target.y);
+            this.spawnBoss();
+        }, null, this)
 
         //Rat collisions
         this.physics.add.overlap(this.hero, this.rats, this.handleEnemyOverlap, null, this);//Rat hits player
@@ -96,8 +112,6 @@ class Dungeon extends Phaser.Scene {
         //Potion collisions
         this.physics.add.overlap(this.hero, this.potions, this.handlePotionPickup, null, this);
 
-        //Boss Collisions
-        this.physics.add.overlap(this.hero.attackHitbox, this.boss, this.handleSwordHit, null, this)
 
 
         // input
@@ -106,7 +120,8 @@ class Dungeon extends Phaser.Scene {
         this.keys.FKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F)
 
         //Music
-        this.sound.play('dungeonBackgroundMusic')
+        this.backgroundMusic = this.sound.add('dungeonBackgroundMusic')
+        this.backgroundMusic.play();
     }
 
 
@@ -120,8 +135,35 @@ class Dungeon extends Phaser.Scene {
         this.zombies.getChildren().forEach(zombie => {
             zombie.update();
         })
+        if (this.boss) {
 
-        this.boss.update();
+            this.boss.update();
+        }
+
+    }
+
+    endGame() {
+        this.rats.getChildren().forEach(rat => {
+            rat.destroy();
+        });
+
+        this.zombies.getChildren().forEach(zombie => {
+            zombie.destroy();
+        })
+        this.boss.destroy();
+
+        this.scene.start('endScene');
+    }
+
+    spawnBoss() {
+        this.boss = new Boss(this, this.bossSpawn.x, this.bossSpawn.y, ' bossIdle', 0, 'Left')
+        //Boss Collisions
+        this.physics.add.collider(this.boss, this.floorLayer);
+        this.physics.add.overlap(this.hero.attackHitbox, this.boss, this.handleSwordHit, null, this)
+        this.backgroundMusic.stop();
+        this.bossMusic = this.sound.add('bossMusic', { loop: true });
+        this.bossMusic.play();
+
     }
 
     spawnEnemies(x, y) {
@@ -139,15 +181,13 @@ class Dungeon extends Phaser.Scene {
             this.rats.add(rat);
             this.physics.add.overlap(this.hero.attackHitbox, this.rats, this.handleSwordHit, null, this)//PLayer can hit rat
             this.physics.add.overlap(this.hero, this.rats, this.handleEnemyOverlap, null, this);//Rat hits player
-
         }
-
     }
 
     handleSwordHit(hitbox, enemy) {
         //Player hits any enemy
         if (enemy && enemy.health > 0) {
-            enemy.handleHurt(hitbox.x, 10);
+            enemy.handleHurt(hitbox.x, this.hero.heroDamage* 10);
         }
     }
 

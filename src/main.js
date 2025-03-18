@@ -16,7 +16,7 @@ let config = {
         }
     },
     zoom: 2,
-    scene: [Load, Menu, Dungeon, GameUI, Instructions]
+    scene: [Load, Menu, Dungeon, GameUI, Instructions, End]
 }
 
 
@@ -30,3 +30,5 @@ let cursors = null
 //set ui sizes
 let borderUISize = game.config.height / 15;
 let borderPadding = borderUISize / 3;
+
+let win = false;

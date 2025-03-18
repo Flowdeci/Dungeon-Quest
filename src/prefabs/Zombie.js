@@ -13,7 +13,7 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
 
         // Zombie properties
         this.scene = scene;
-        this.health = 3;
+        this.health = 30;
         this.speed = 40;
         this.damage = 1;
         this.direction = direction;
@@ -150,11 +150,12 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
         });
     }
 
-    handleHurt(hitX) {
+    handleHurt(hitX, damage) {
         if (this.isHurt || this.isDead) return; // Avoid overlapping hurt states or processing if dead
 
         console.log("Zombie hit!");
         this.isHurt = true;
+        this.scene.sound.add("zombieHit").play();
 
 
         // Calculate knockback direction based on hit position
@@ -174,7 +175,7 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX(knockbackDirection * 50);
 
         // Reduce health
-        this.health -= 1;
+        this.health -= damage;
         if (this.health <= 0) {
             this.handleDeath();
             return;

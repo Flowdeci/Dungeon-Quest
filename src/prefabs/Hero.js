@@ -18,6 +18,7 @@ class Hero extends Phaser.Physics.Arcade.Sprite {
         this.attackFrame = 0;
         this.attackReset = 0;//timer for how long since last attack
         this.isAttacking = false;
+        this.heroDamage = 1;
         this.attackResetTimer = null;
         this.maxHealth = 5;
         this.health = this.maxHealth;
@@ -332,6 +333,7 @@ class AttackState extends State {
         //console.log("Entering Attack");
         //hero.setVelocity(0);
         hero.swordSwingSound.play();
+        hero.heroDamage=1;
         hero.attackHitbox.body.enable = true;
 
         //If we attack again clear and delete the odl timer so it doesnt reset our attack chain prematurley
@@ -398,7 +400,9 @@ class HammerState extends State {
         //console.log("Entering Hammer Attack");
         hero.hammerwingSound.play()
         hero.setVelocity(0);
+        hero.heroDamage=2;
         hero.anims.play(`heroHammer${hero.direction}`, true);
+        hero.attackHitbox.body.enable = true;
 
         if (hero.direction === 'Left') {
             hero.setOrigin(0.75, 1);
@@ -410,6 +414,7 @@ class HammerState extends State {
         hero.once('animationcomplete', () => {
             hero.setOrigin(0.5, 1);
             hero.body.setOffset(0, 0);
+            hero.attackHitbox.body.enable = false;
             this.stateMachine.transition('idle');
         });
     }
@@ -428,7 +433,6 @@ class HurtState extends State {
 
         hero.once('animationcomplete', () => {
             this.stateMachine.transition('idle');
-
             scene.time.delayedCall(hero.hurtReset, () => {
                 hero.hurtReset = 0;
 
@@ -440,10 +444,14 @@ class HurtState extends State {
         if (hero.health <= 0) {
             //Death Logic Game over
             hero.health = 0;
+            hero.anims.play(`heroDeath${hero.direction}`, true);
+            hero.setInteractive(false);
+            hero.once('animationcomplete', () => {
+                hero.scene.endGame();
+            });
+
             return;
         }
-
-
     }
 }
 
@@ -486,7 +494,6 @@ class HealState extends State {
             this.stateMachine.transition('idle')
             return;
         }
-
 
         console.log("heal")
         hero.playerHealSound.play();

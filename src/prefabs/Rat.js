@@ -13,21 +13,20 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
 
         // Rat properties
         this.scene = scene;
-        this.health = 2;
+        this.health = 20;
         this.speed = 40;
         this.damage = 1;
         this.direction = direction;
-        this.isHurt = false; // Tracks whether the Rat is currently hurt
+        this.isHurt = false;
         this.hurtTimer = 0;
 
         // Patrol behavior flags
         this.isTurning = false;
-        this.isDead = false; // Tracks whether the Rat is dead
+        this.isDead = false;
     }
 
     update() {
         if (this.isHurt || this.isDead) {
-            // If hurt or dead, skip patrol behavior
             return;
         }
 
@@ -84,11 +83,12 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
         });
     }
 
-    handleHurt(hitX) {
+    handleHurt(hitX, damage) {
         if (this.isHurt || this.isDead) return; // Avoid overlapping hurt states or processing if dead
 
         console.log("Rat hit!");
         this.isHurt = true;
+        this.scene.sound.play("ratHit");
 
 
         // Calculate knockback direction based on hit position
@@ -108,7 +108,7 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX(knockbackDirection * 50);
 
         // Reduce health
-        this.health -= 1;
+        this.health -= damage;
         if (this.health <= 0) {
             this.handleDeath();
             return;

@@ -94,6 +94,19 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
         }
         this.hurt = true;
         this.health -= damage;
+        this.scene.sound.play('bossHit');
+
+        if (this.health <= 0) { //if health is less than 0
+            this.anims.play(`bossDeath`, true);
+            this.once(
+                'animationcomplete', () => {
+                    win = true;
+                    this.scene.endGame();
+                }
+            )
+            return;
+        }
+
         console.log("boss health", this.health)
         this.anims.play(`bossHit${this.direction}`, true);
 
