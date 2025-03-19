@@ -25,7 +25,7 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
         this.isDead = false; // Tracks whether the Zombie is dead
 
         // Add an attack hitbox
-        this.attackHitbox = scene.add.rectangle(this.x, this.y, 20, 20, 0xff0000, 0.3); // Invisible red rectangle
+        this.attackHitbox = scene.add.rectangle(this.x, this.y, 20, 20, 0xff0000, 0); // Invisible red rectangle
         scene.physics.add.existing(this.attackHitbox);
         this.attackHitbox.body.setAllowGravity(false);
         this.attackHitbox.body.enable = false; // Initially disabled
