@@ -46,8 +46,9 @@ class Load extends Phaser.Scene {
         this.load.audio('playerHealSound', 'playerHeal.wav')
         this.load.audio('bossMusic', 'bossMusic.mp3')
         this.load.audio('zombieHit', 'zombieHit.mp3')
-        this.load.audio('bossHit', 'bossHit.mp3')
         this.load.audio('ratHit', 'ratHit.mp3')
+        this.load.audio('bossHit', 'bossHit.mp3')
+        
 
 
 
