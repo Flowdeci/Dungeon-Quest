@@ -166,7 +166,7 @@ function handleTransitions(scene, hero, transitions, stateMachine) {
                 }
                 break;
             case 'hurt':
-                if ( hero.hurtReset === 0 && stateMachine.state != 'dash') {
+                if (hero.hurtReset === 0 && stateMachine.state != 'dash') {
                     resetHeroOffsets(hero);
                     stateMachine.transition('hurt');
                     return true;
