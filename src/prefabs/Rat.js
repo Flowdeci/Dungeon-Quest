@@ -88,7 +88,7 @@ class Rat extends Phaser.Physics.Arcade.Sprite {
 
         console.log("Rat hit!");
         this.isHurt = true;
-        if (this.scene.sound.get('ratHit')) { this.scene.sound.play("ratHit"); }
+        //if (this.scene.sound.get('ratasfasfHit')) { this.scene.sound.play("ratHit"); }
 
 
 
